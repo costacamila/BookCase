@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookCase.Web
 {
@@ -23,7 +25,21 @@ namespace BookCase.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<AuthenticateService>();
             services.AddControllersWithViews();
+
+            var key = Encoding.UTF8.GetBytes(this.Configuration["Token:Secret"]);
+
+            services.AddAuthentication(opt =>
+            {
+                opt.DefaultScheme = "Bearer";
+            }).AddJwtBearer(o =>
+            {
+                o.TokenValidationParameters.ValidIssuer = "BookCase-API";
+                o.TokenValidationParameters.ValidAudience = "BookCase-API";
+                o.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(key);
+            });
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,7 +59,8 @@ namespace BookCase.Web
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseSession();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

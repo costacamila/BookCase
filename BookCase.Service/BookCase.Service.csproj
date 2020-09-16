@@ -9,4 +9,15 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.7.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookCase.Domain\BookCase.Domain.csproj" />
+    <ProjectReference Include="..\BookCase.Repository\BookCase.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AuthorService\" />
+    <Folder Include="BookService\" />
+    <Folder Include="UserService\" />
+  </ItemGroup>
+
 </Project>
