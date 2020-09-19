@@ -3,17 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCase.Web", "BookCase.Web\BookCase.Web.csproj", "{E35AD577-8045-4E35-901F-08D84FD89269}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCase.Web", "BookCase.Web\BookCase.Web.csproj", "{E35AD577-8045-4E35-901F-08D84FD89269}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCase.Domain", "BookCase.Domain\BookCase.Domain.csproj", "{4E851105-EF2F-4B66-9B23-1DD727920FCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCase.Domain", "BookCase.Domain\BookCase.Domain.csproj", "{4E851105-EF2F-4B66-9B23-1DD727920FCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCase.Service", "BookCase.Service\BookCase.Service.csproj", "{7DB46A24-24C0-4670-BE97-3D664737BEFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCase.Service", "BookCase.Service\BookCase.Service.csproj", "{7DB46A24-24C0-4670-BE97-3D664737BEFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCase.Repository", "BookCase.Repository\BookCase.Repository.csproj", "{7A9DEFDE-10D1-47E2-BB25-01523D858FE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCase.Repository", "BookCase.Repository\BookCase.Repository.csproj", "{7A9DEFDE-10D1-47E2-BB25-01523D858FE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCase.API", "BookCase.API\BookCase.API.csproj", "{3FEF1BD8-21ED-48AA-A1E7-6D0FE621AC9D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookCase.Business", "BookCase.Business\BookCase.Business.csproj", "{65DC7FD7-E367-4AD0-9439-0317CA0E0E10}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookCase.API", "BookCase.API\BookCase.API.csproj", "{3FEF1BD8-21ED-48AA-A1E7-6D0FE621AC9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +39,6 @@ Global
 		{3FEF1BD8-21ED-48AA-A1E7-6D0FE621AC9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FEF1BD8-21ED-48AA-A1E7-6D0FE621AC9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FEF1BD8-21ED-48AA-A1E7-6D0FE621AC9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{65DC7FD7-E367-4AD0-9439-0317CA0E0E10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{65DC7FD7-E367-4AD0-9439-0317CA0E0E10}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{65DC7FD7-E367-4AD0-9439-0317CA0E0E10}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{65DC7FD7-E367-4AD0-9439-0317CA0E0E10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

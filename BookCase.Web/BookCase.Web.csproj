@@ -21,4 +21,10 @@
     <PackageReference Include="RestSharp" Version="106.11.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookCase.API\BookCase.API.csproj" />
+    <ProjectReference Include="..\BookCase.Domain\BookCase.Domain.csproj" />
+    <ProjectReference Include="..\BookCase.Service\BookCase.Service.csproj" />
+  </ItemGroup>
+
 </Project>

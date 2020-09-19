@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.8" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookCase.Domain\BookCase.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

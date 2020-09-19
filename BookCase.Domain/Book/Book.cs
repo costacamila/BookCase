@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace BookCase.Domain.Book
 {
@@ -14,5 +15,8 @@ namespace BookCase.Domain.Book
         public string ISBN { get; set; }
         [Display(Name = "Year")]
         public string Year { get; set; }
+        [JsonIgnore]
+        public virtual Domain.Author.Author Author { get; set; }
+
     }
 }

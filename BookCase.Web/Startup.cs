@@ -3,9 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BookCase.Domain.Author.Repository;
+using BookCase.Domain.Book.Repository;
+using BookCase.Domain.User;
+using BookCase.Domain.User.Repository;
+using BookCase.Repository.Author;
+using BookCase.Repository.Book;
+using BookCase.Repository.User;
+using BookCase.Service.AuthorService;
+using BookCase.Service.BookService;
+using BookCase.Service.UserService;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -25,6 +38,36 @@ namespace BookCase.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+
+            services.AddTransient<IUserStore<User>, UserRepository>();
+            services.AddTransient<IUserIdentityManager, UserIdentityManager>();
+            //services.AddTransient<IRoleStore<Role>, RoleRepository>();
+
+            services.AddTransient<IAuthorService, AuthorService>();
+            services.AddTransient<IAuthorRepository, AuthorRepository>();
+
+            services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IBookRepository, BookRepository>();
+
+            services.AddTransient<UserRepository>();
+
+            services.AddDbContext<Repository.Context.BookCaseContext>(opt =>
+            {
+                opt.UseSqlServer(Configuration.GetConnectionString("BookCaseConnection"));
+            });
+
+            //services.AddIdentity<Account, Role>().AddDefaultTokenProviders();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.AccessDeniedPath = "/Account/AccessDenied";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+            });
+
             services.AddTransient<AuthenticateService>();
             services.AddControllersWithViews();
 
@@ -46,7 +89,7 @@ namespace BookCase.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
+            { 
                 app.UseDeveloperExceptionPage();
             }
             else

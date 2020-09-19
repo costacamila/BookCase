@@ -16,5 +16,6 @@ namespace BookCase.Domain.Author
         public string Mail { get; set; }
         [Display(Name = "Birthday")]
         public DateTime Birthday { get; set; }
+        public virtual IList<Domain.Book.Book> Books { get; set; }
     }
 }
