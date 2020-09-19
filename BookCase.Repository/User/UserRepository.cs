@@ -30,12 +30,37 @@ namespace BookCase.Repository.User
             throw new NotImplementedException();
         }
 
+        public Domain.User.User FindByIdAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<Domain.User.User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
         public Task<string> GetNormalizedUserNameAsync(Domain.User.User user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Domain.User.User GetUserByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Domain.User.User> GetUserByEmailPassword(string email, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Domain.User.User GetUserByUsername(string username)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<Domain.User.User> GetUserByUserNamePassword(string userName, string password)
         {
             throw new NotImplementedException();
         }
@@ -61,6 +86,11 @@ namespace BookCase.Repository.User
         }
 
         public Task<IdentityResult> UpdateAsync(Domain.User.User user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<IdentityResult> UpdateUserAsync(Domain.User.User user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

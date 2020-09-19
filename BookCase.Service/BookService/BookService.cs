@@ -18,6 +18,10 @@ namespace BookCase.Service.BookService
 
         public async Task<IdentityResult> SaveBook(Domain.Book.Book book)
         {
+            if (BookRepository.GetBookByISBN(book.ISBN) != null)
+            {
+                throw new Exception("Já existe um livro com este ISBN");
+            }
             return await BookRepository.CreateBookAsync(book);
         }
 
