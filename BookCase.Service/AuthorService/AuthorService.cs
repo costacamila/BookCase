@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,11 @@ namespace BookCase.Service.AuthorService
 
         public async Task<IdentityResult> SaveAuthor(Domain.Author.Author author)
         {
+            if (this.AuthorRepository.GetAll().Where(x => (x.Name + x.Surname)
+                                == (author.Name + author.Surname)).FirstOrDefault() != null)
+            {
+                throw new Exception("Este autor já existe");
+            }
             return await AuthorRepository.CreateAuthorAsync(author);
         }
 
@@ -33,11 +39,19 @@ namespace BookCase.Service.AuthorService
 
         public async Task<IdentityResult> UpdateAuthorAsync(Domain.Author.Author newAuthor)
         {
+            if (this.AuthorRepository.GetAll().Where(x => x.Id  == newAuthor.Id).FirstOrDefault() == null)
+            {
+                throw new Exception("Este autor não existe");
+            }
             return await this.AuthorRepository.UpdateAuthorAsync(newAuthor);
         }
 
         public async Task<IdentityResult> DeleteAuthorAsync(Guid id)
         {
+            if (this.AuthorRepository.GetAll().Where(x => x.Id == id).FirstOrDefault() == null)
+            {
+                throw new Exception("Este autor não existe");
+            }
             return await this.AuthorRepository.DeleteAuthorAsync(id);
         }
     }

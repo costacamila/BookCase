@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,11 +38,19 @@ namespace BookCase.Service.BookService
 
         public async Task<IdentityResult> UpdateBookAsync(Domain.Book.Book newBook)
         {
+            if (this.BookRepository.GetAll().Where(x => x.Id == newBook.Id).FirstOrDefault() == null)
+            {
+                throw new Exception("Este livro não existe");
+            }
             return await this.BookRepository.UpdateBookAsync(newBook);
         }
 
         public async Task<IdentityResult> DeleteBookAsync(Guid id)
         {
+            if (this.BookRepository.GetAll().Where(x => x.Id == id).FirstOrDefault() == null)
+            {
+                throw new Exception("Este livro não existe");
+            }
             return await this.BookRepository.DeleteBookAsync(id);
         }
     }

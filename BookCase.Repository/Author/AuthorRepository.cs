@@ -1,7 +1,10 @@
 ﻿using BookCase.Domain.Author.Repository;
+using BookCase.Repository.Context;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,14 +12,23 @@ namespace BookCase.Repository.Author
 {
     public class AuthorRepository : IAuthorRepository
     {
-        public Task<IdentityResult> CreateAuthorAsync(Domain.Author.Author author)
+        private BookCaseContext Context { get; set; }
+        public AuthorRepository (BookCaseContext bookCaseContext)
         {
-            throw new NotImplementedException();
+            this.Context = bookCaseContext;
+        }
+        public async Task<IdentityResult> CreateAuthorAsync(Domain.Author.Author author)
+        {
+            this.Context.Authors.Add(author);
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> DeleteAuthorAsync(Guid id)
+        public async Task<IdentityResult> DeleteAuthorAsync(Guid id)
         {
-            throw new NotImplementedException();
+            this.Context.Authors.Remove(GetById(id));
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
         public Task<IdentityResult> FindByIdAsync(Guid authorId)
@@ -26,17 +38,27 @@ namespace BookCase.Repository.Author
 
         public IEnumerable<Domain.Author.Author> GetAll()
         {
-            throw new NotImplementedException();
+            return this.Context.Authors.Include(x => x.Books).AsEnumerable();
         }
 
         public Domain.Author.Author GetById(Guid authorId)
         {
-            throw new NotImplementedException();
+            return this.Context.Authors.FirstOrDefault(x => x.Id == authorId);
         }
 
-        public Task<IdentityResult> UpdateAuthorAsync(Domain.Author.Author newAuthor)
+        public async Task<IdentityResult> UpdateAuthorAsync(Domain.Author.Author newAuthor)
         {
-            throw new NotImplementedException();
+            var authorOld = Context.Authors.FirstOrDefault(x => x.Id == newAuthor.Id);
+
+            authorOld.Name = newAuthor.Name;
+            authorOld.Surname = newAuthor.Surname;
+            authorOld.Mail = newAuthor.Mail;
+            authorOld.Birthday = newAuthor.Birthday;
+
+            Context.Authors.Update(authorOld);
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
+
         }
     }
 }

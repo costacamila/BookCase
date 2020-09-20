@@ -18,34 +18,46 @@ namespace BookCase.Repository.Book
             this.Context = bookCaseContext;
         }
 
-        public Task<IdentityResult> CreateBookAsync(Domain.Book.Book author)
+        public async Task<IdentityResult> CreateBookAsync(Domain.Book.Book book)
         {
-            throw new NotImplementedException();
+            this.Context.Books.Add(book);
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> DeleteBookAsync(Guid id)
+        public async Task<IdentityResult> DeleteBookAsync(Guid id)
         {
-            throw new NotImplementedException();
+            this.Context.Books.Remove(GetById(id));
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> FindByIdAsync(Guid authorId)
+        public Task<IdentityResult> FindByIdAsync(Guid bookId)
         {
             throw new NotImplementedException();
         }
 
         public IEnumerable<Domain.Book.Book> GetAll()
         {
-            throw new NotImplementedException();
+            return this.Context.Books.AsEnumerable();
         }
 
-        public Domain.Book.Book GetById(Guid authorId)
+        public Domain.Book.Book GetById(Guid bookId)
         {
-            throw new NotImplementedException();
+            return this.Context.Books.FirstOrDefault(x => x.Id == bookId);
         }
 
-        public Task<IdentityResult> UpdateBookAsync(Domain.Book.Book newBook)
+        public async Task<IdentityResult> UpdateBookAsync(Domain.Book.Book newBook)
         {
-            throw new NotImplementedException();
+            var bookOld = Context.Books.FirstOrDefault(x => x.Id == newBook.Id);
+
+            bookOld.Title = newBook.Title;
+            bookOld.ISBN = newBook.ISBN;
+            bookOld.Year = newBook.Year;
+
+            Context.Books.Update(bookOld);
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
         public Domain.Book.Book GetBookByISBN(string ISBN)
