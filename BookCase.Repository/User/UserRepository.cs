@@ -1,7 +1,9 @@
 ﻿using BookCase.Domain.User.Repository;
+using BookCase.Repository.Context;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,14 +12,24 @@ namespace BookCase.Repository.User
 {
     public class UserRepository : IUserStore<Domain.User.User>, IUserRepository
     {
-        public Task<IdentityResult> CreateAsync(Domain.User.User user, CancellationToken cancellationToken)
+        private BookCaseContext Context { get; set; }
+
+        public UserRepository(BookCaseContext bookCaseContext)
         {
-            throw new NotImplementedException();
+            this.Context = bookCaseContext;
+        }
+        public async Task<IdentityResult> CreateAsync(Domain.User.User user, CancellationToken cancellationToken)
+        {
+            this.Context.Users.Add(user);
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
-        public Task<IdentityResult> DeleteAsync(Domain.User.User user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(Domain.User.User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            this.Context.Users.Remove(user);
+            await this.Context.SaveChangesAsync();
+            return IdentityResult.Success;
         }
 
         public void Dispose()
@@ -47,12 +59,16 @@ namespace BookCase.Repository.User
 
         public Domain.User.User GetUserByEmail(string email)
         {
-            throw new NotImplementedException();
+            return this.Context.Users.FirstOrDefault(x => x.Mail == email);
+        }
+        public Domain.User.User GetUserById(Guid id)
+        {
+            return this.Context.Users.FirstOrDefault(x => x.Id == id);
         }
 
         public Task<Domain.User.User> GetUserByEmailPassword(string email, string password)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(this.Context.Users.FirstOrDefault(x => x.Mail == email && x.Password == password));
         }
 
         public Domain.User.User GetUserByUsername(string username)

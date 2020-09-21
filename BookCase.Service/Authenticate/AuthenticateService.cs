@@ -24,7 +24,7 @@ namespace BookCase.Service.Authenticate
 
         public string AuthenticateUser(string mail, string password)
         {
-            var user = this.Repository.GetUserByMail(mail);
+            var user = this.Repository.GetUserByEmail(mail);
 
             if (user == null)
                 return null;

@@ -15,6 +15,8 @@ namespace BookCase.Domain.Book
         public string ISBN { get; set; }
         [Display(Name = "Year")]
         public string Year { get; set; }
+        [Display(Name = "Author Name")]
+        public string authorName { get; set; }
         [JsonIgnore]
         public virtual Domain.Author.Author Author { get; set; }
 

@@ -18,6 +18,10 @@ namespace BookCase.Service.UserService
 
         public async Task<IdentityResult> Save(BookCase.Domain.User.User user)
         {
+            if (UserRepository.GetUserByEmail(user.Mail) != null)
+            {
+                throw new Exception("Já existe um usuário com este email");
+            }
             return await UserRepository.CreateAsync(user, default);
         }
 
@@ -43,6 +47,10 @@ namespace BookCase.Service.UserService
 
         public async Task<IdentityResult> Delete(Domain.User.User user)
         {
+            if (UserRepository.GetUserByEmail(user.Mail) == null)
+            {
+                throw new Exception("Não existe um usuário com este email");
+            }
             return await UserRepository.DeleteAsync(user, default);
         }
     }

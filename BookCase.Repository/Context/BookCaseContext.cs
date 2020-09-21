@@ -14,6 +14,8 @@ namespace BookCase.Repository.Context
         public static readonly ILoggerFactory _loggerFactory
                     = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
+        //public BookCaseContext() { }
+
         public BookCaseContext(DbContextOptions<BookCaseContext> options) : base(options)
         {
 
@@ -21,6 +23,8 @@ namespace BookCase.Repository.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
+            //optionsBuilder.UseSqlServer("DataSource=app.db");
             optionsBuilder.UseLoggerFactory(_loggerFactory);
 
             base.OnConfiguring(optionsBuilder);

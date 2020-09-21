@@ -17,6 +17,7 @@ namespace BookCase.Repository.Mapping
             builder.Property(x => x.Title).IsRequired().HasMaxLength(100);
             builder.Property(x => x.ISBN).IsRequired().HasMaxLength(50);
             builder.Property(x => x.Year).IsRequired().HasMaxLength(4);
+            builder.Property(x => x.authorName).IsRequired().HasMaxLength(100);
             builder.HasOne<Domain.Author.Author>(x => x.Author);
 
         }

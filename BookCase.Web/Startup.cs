@@ -9,6 +9,7 @@ using BookCase.Domain.User;
 using BookCase.Domain.User.Repository;
 using BookCase.Repository.Author;
 using BookCase.Repository.Book;
+using BookCase.Repository.Context;
 using BookCase.Repository.User;
 using BookCase.Service.AuthorService;
 using BookCase.Service.BookService;
@@ -53,9 +54,9 @@ namespace BookCase.Web
 
             services.AddTransient<UserRepository>();
 
-            services.AddDbContext<Repository.Context.BookCaseContext>(opt =>
+            services.AddDbContext<BookCaseContext>(opt =>
             {
-                opt.UseSqlServer(Configuration.GetConnectionString("BookCaseConnection"));
+                opt.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"));
             });
 
             //services.AddIdentity<Account, Role>().AddDefaultTokenProviders();

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,6 +31,11 @@ namespace BookCase.API
         {
             services.AddTransient<AuthenticateService>();
             services.AddControllers();
+
+            services.AddDbContext<Repository.Context.BookCaseContext>(opt =>
+            {
+                opt.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"));
+            });
 
             var key = Encoding.UTF8.GetBytes(this.Configuration["Token:Secret"]);
 
