@@ -12,6 +12,7 @@ namespace BookCase.Domain.User
         public string Mail { get; set; }
         [Display(Name = "Password")]
         public string Password { get; set; }
+        public Role Role { get; set; }
 
     }
 }
