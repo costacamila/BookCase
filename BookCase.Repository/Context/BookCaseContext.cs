@@ -8,13 +8,12 @@ namespace BookCase.Repository.Context
     {
 
         public DbSet<Domain.User.User> Users { get; set; }
+        public DbSet<Domain.User.Role> Profiles { get; set; }
         public DbSet<Domain.Author.Author> Authors { get; set; }
         public DbSet<Domain.Book.Book> Books { get; set; }
 
         public static readonly ILoggerFactory _loggerFactory
                     = LoggerFactory.Create(builder => { builder.AddConsole(); });
-
-        //public BookCaseContext() { }
 
         public BookCaseContext(DbContextOptions<BookCaseContext> options) : base(options)
         {
@@ -34,6 +33,7 @@ namespace BookCase.Repository.Context
         {
             modelBuilder.ApplyConfiguration(new UserMap());
             modelBuilder.ApplyConfiguration(new AuthorMap());
+            modelBuilder.ApplyConfiguration(new RoleMap());
             modelBuilder.ApplyConfiguration(new BookMap());
 
             base.OnModelCreating(modelBuilder);

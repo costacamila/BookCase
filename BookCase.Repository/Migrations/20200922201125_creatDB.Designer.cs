@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookCase.Repository.Migrations
 {
     [DbContext(typeof(BookCaseContext))]
-    [Migration("20200921010226_createDB")]
-    partial class createDB
+    [Migration("20200922201125_creatDB")]
+    partial class creatDB
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -86,6 +86,22 @@ namespace BookCase.Repository.Migrations
                     b.ToTable("Book");
                 });
 
+            modelBuilder.Entity("BookCase.Domain.User.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Role");
+                });
+
             modelBuilder.Entity("BookCase.Domain.User.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -102,7 +118,12 @@ namespace BookCase.Repository.Migrations
                         .HasColumnType("nvarchar(25)")
                         .HasMaxLength(25);
 
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("User");
                 });
@@ -112,6 +133,13 @@ namespace BookCase.Repository.Migrations
                     b.HasOne("BookCase.Domain.Author.Author", "Author")
                         .WithMany("Books")
                         .HasForeignKey("AuthorId");
+                });
+
+            modelBuilder.Entity("BookCase.Domain.User.User", b =>
+                {
+                    b.HasOne("BookCase.Domain.User.Role", null)
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId");
                 });
 #pragma warning restore 612, 618
         }

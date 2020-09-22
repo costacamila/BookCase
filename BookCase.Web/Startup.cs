@@ -44,7 +44,7 @@ namespace BookCase.Web
 
             services.AddTransient<IUserStore<User>, UserRepository>();
             services.AddTransient<IUserIdentityManager, UserIdentityManager>();
-            //services.AddTransient<IRoleStore<Role>, RoleRepository>();
+            services.AddTransient<IRoleStore<Role>, RoleRepository>();
 
             services.AddTransient<IAuthorService, AuthorService>();
             services.AddTransient<IAuthorRepository, AuthorRepository>();
@@ -59,7 +59,7 @@ namespace BookCase.Web
                 opt.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"));
             });
 
-            //services.AddIdentity<Account, Role>().AddDefaultTokenProviders();
+            services.AddIdentity<User, Role>().AddDefaultTokenProviders();
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -90,7 +90,7 @@ namespace BookCase.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            { 
+            {
                 app.UseDeveloperExceptionPage();
             }
             else

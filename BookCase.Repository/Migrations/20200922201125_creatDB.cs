@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BookCase.Repository.Migrations
 {
-    public partial class createDB : Migration
+    public partial class creatDB : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -23,16 +23,15 @@ namespace BookCase.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "Role",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    Mail = table.Column<string>(maxLength: 50, nullable: false),
-                    Password = table.Column<string>(maxLength: 25, nullable: false)
+                    Name = table.Column<string>(maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.PrimaryKey("PK_Role", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,10 +56,35 @@ namespace BookCase.Repository.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    Mail = table.Column<string>(maxLength: 50, nullable: false),
+                    Password = table.Column<string>(maxLength: 25, nullable: false),
+                    RoleId = table.Column<Guid>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_User_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Book_AuthorId",
                 table: "Book",
                 column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_User_RoleId",
+                table: "User",
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -73,6 +97,9 @@ namespace BookCase.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "Author");
+
+            migrationBuilder.DropTable(
+                name: "Role");
         }
     }
 }
