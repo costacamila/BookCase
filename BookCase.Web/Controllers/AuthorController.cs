@@ -55,7 +55,7 @@ namespace BookCase.Web.Controllers
         }
 
         // GET: AuthorController/Create
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View();
         }
