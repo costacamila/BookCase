@@ -22,7 +22,5 @@ namespace BookCase.Domain.User.Repository
         Domain.User.User GetUserByUsername(string username);
 
         Task<User> GetUserByEmailPassword(string email, string password);
-
-        Task<Domain.User.User> GetUserByUserNamePassword(string userName, string password);
     }
 }

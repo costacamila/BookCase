@@ -49,15 +49,23 @@ namespace BookCase.Repository.Book
 
         public async Task<IdentityResult> UpdateBookAsync(Domain.Book.Book newBook)
         {
-            var bookOld = Context.Books.FirstOrDefault(x => x.Id == newBook.Id);
+            try
+            {
+                var bookOld = Context.Books.FirstOrDefault(x => x.Id == newBook.Id);
 
-            bookOld.Title = newBook.Title;
-            bookOld.ISBN = newBook.ISBN;
-            bookOld.Year = newBook.Year;
+                bookOld.Title = newBook.Title;
+                bookOld.Year = newBook.Year;
 
-            Context.Books.Update(bookOld);
-            await this.Context.SaveChangesAsync();
-            return IdentityResult.Success;
+                Context.Books.Update(bookOld);
+                await this.Context.SaveChangesAsync();
+                return IdentityResult.Success;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace);
+                return IdentityResult.Failed();
+            }
+            
         }
 
         public Domain.Book.Book GetBookByISBN(string ISBN)

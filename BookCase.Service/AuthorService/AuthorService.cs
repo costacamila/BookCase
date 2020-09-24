@@ -20,9 +20,11 @@ namespace BookCase.Service.AuthorService
         public async Task<IdentityResult> SaveAuthor(Domain.Author.Author author)
         {
             if (this.AuthorRepository.GetAll().Where(x => (x.Name + x.Surname)
-                                == (author.Name + author.Surname)).FirstOrDefault() != null)
+                                == (author.Name + author.Surname)).FirstOrDefault() != null
+                                || this.AuthorRepository.GetAll().Where(x => x.Mail.Trim().ToLower().Replace(" ", "")
+                                    == author.Mail.Trim().ToLower().Replace(" ", "")).FirstOrDefault() != null)
             {
-                throw new Exception("Este autor já existe");
+                throw new Exception("Este autor/email já existe.");
             }
             return await AuthorRepository.CreateAuthorAsync(author);
         }

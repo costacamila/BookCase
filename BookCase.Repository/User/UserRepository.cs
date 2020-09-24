@@ -12,6 +12,8 @@ namespace BookCase.Repository.User
 {
     public class UserRepository : IUserStore<Domain.User.User>, IUserRepository
     {
+        private bool disposedValue;
+
         private BookCaseContext Context { get; set; }
 
         public UserRepository(BookCaseContext bookCaseContext)
@@ -20,8 +22,17 @@ namespace BookCase.Repository.User
         }
         public async Task<IdentityResult> CreateAsync(Domain.User.User user, CancellationToken cancellationToken)
         {
-            this.Context.Users.Add(user);
-            await this.Context.SaveChangesAsync();
+            try
+            {
+                this.Context.Users.Add(user);
+                await this.Context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine(ex.InnerException);
+            }
             return IdentityResult.Success;
         }
 
@@ -32,17 +43,12 @@ namespace BookCase.Repository.User
             return IdentityResult.Success;
         }
 
-        public void Dispose()
+        public Domain.User.User FindByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return this.Context.Users.FirstOrDefault(x => x.Id == userId);
         }
 
         public Task<Domain.User.User> FindByIdAsync(string userId, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Domain.User.User FindByIdAsync(Guid userId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
@@ -54,7 +60,7 @@ namespace BookCase.Repository.User
 
         public Task<string> GetNormalizedUserNameAsync(Domain.User.User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Mail);
         }
 
         public Domain.User.User GetUserByEmail(string email)
@@ -76,29 +82,26 @@ namespace BookCase.Repository.User
             throw new NotImplementedException();
         }
 
-        public Task<Domain.User.User> GetUserByUserNamePassword(string userName, string password)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<string> GetUserIdAsync(Domain.User.User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Id.ToString());
         }
 
         public Task<string> GetUserNameAsync(Domain.User.User user, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(user.Mail.ToString());
         }
 
         public Task SetNormalizedUserNameAsync(Domain.User.User user, string normalizedName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.Mail = normalizedName;
+            return Task.CompletedTask;
         }
 
         public Task SetUserNameAsync(Domain.User.User user, string userName, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            user.Mail = userName;
+            return Task.CompletedTask;
         }
 
         public Task<IdentityResult> UpdateAsync(Domain.User.User user, CancellationToken cancellationToken)
@@ -110,5 +113,43 @@ namespace BookCase.Repository.User
         {
             throw new NotImplementedException();
         }
+
+        #region Dispose Implementation
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~AccountRepository()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        //public Task<Domain.User.User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+        //{
+        //    throw new NotImplementedException();
+        //}
+        #endregion
+
     }
 }

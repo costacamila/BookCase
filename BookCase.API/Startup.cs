@@ -3,7 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BookCase.Domain.Author.Repository;
+using BookCase.Domain.Book.Repository;
+using BookCase.Domain.User.Repository;
+using BookCase.Repository.Author;
+using BookCase.Repository.Book;
+using BookCase.Repository.User;
 using BookCase.Service.Authenticate;
+using BookCase.Service.AuthorService;
+using BookCase.Service.BookService;
+using BookCase.Service.UserService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,13 +38,23 @@ namespace BookCase.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<AuthenticateService>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IAuthorService, AuthorService>();
+            services.AddTransient<IAuthorRepository, AuthorRepository>();
+            services.AddTransient<IBookService, BookService>();
+            services.AddTransient<IBookRepository, BookRepository>();
+            services.AddTransient<UserRepository>();
+
             services.AddControllers();
 
             services.AddDbContext<Repository.Context.BookCaseContext>(opt =>
             {
                 opt.UseSqlServer(Configuration.GetConnectionString("ConnectionDB"));
             });
+
+
+            services.AddTransient<AuthenticateService>();
 
             var key = Encoding.UTF8.GetBytes(this.Configuration["Token:Secret"]);
 

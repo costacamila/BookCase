@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookCase.Domain.Author;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,6 +11,7 @@ using RestSharp;
 
 namespace BookCase.Web.Controllers
 {
+    [Authorize]
     public class AuthorController : Controller
     {
         // GET: AuthorController
@@ -22,7 +24,7 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -43,12 +45,12 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
 
-            var requestAuthor = new RestRequest("https://localhost:5003/api/author" + id);
+            var requestAuthor = new RestRequest("https://localhost:5003/api/author/" + id);
             requestAuthor.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
 
             return View(client.Get<Author>(requestAuthor).Data);
@@ -74,7 +76,7 @@ namespace BookCase.Web.Controllers
                 var token = new RestRequest("https://localhost:5003/api/authenticate/token");
                 token.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = mail,
+                    Mail = mail,
                     Password = password
                 }));
                 var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -84,7 +86,7 @@ namespace BookCase.Web.Controllers
                 {
                     Name = author.Name,
                     Surname = author.Surname,
-                    Email = author.Mail,
+                    Mail = author.Mail,
                     Birthday = author.Birthday
                 }));
                 requestAuthor.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
@@ -109,7 +111,7 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -118,7 +120,7 @@ namespace BookCase.Web.Controllers
             requestAuthor.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
 
             var author = (client.Get<Author>(requestAuthor).Data);
-            this.HttpContext.Session.SetString("AuthorId", client.Get<Author>(requestAuthor).Data.Id.ToString());
+            this.HttpContext.Session.SetString("AuthorId", JsonConvert.SerializeObject(client.Get<Author>(requestAuthor).Data.Id.ToString()));
             return View(author);
         }
 
@@ -136,12 +138,14 @@ namespace BookCase.Web.Controllers
                 var token = new RestRequest("https://localhost:5003/api/authenticate/token");
                 token.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = mail,
+                    Mail = mail,
                     Password = password
                 }));
                 var tokenResponse = client.Post<TokenResult>(token).Data;
 
                 var id = JsonConvert.DeserializeObject(this.HttpContext.Session.GetString("AuthorId"));
+
+                Console.WriteLine(id);
 
                 var requestAuthor = new RestRequest("https://localhost:5003/api/author/edit/");
                 requestAuthor.AddJsonBody(JsonConvert.SerializeObject(new
@@ -149,19 +153,20 @@ namespace BookCase.Web.Controllers
                     Id = id,
                     Name = author.Name,
                     Surname = author.Surname,
-                    Email = author.Mail,
+                    Mail = author.Mail,
                     Birthday = author.Birthday
-                }));;
+                }));
                 requestAuthor.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
 
                 await client.PutAsync<Author>(requestAuthor);
 
                 this.HttpContext.Session.Remove("AuthorId");
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.StackTrace);
                 ModelState.AddModelError("APP_ERROR", "Author doesn't exists.");
                 return View();
             }
@@ -177,7 +182,7 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -203,7 +208,7 @@ namespace BookCase.Web.Controllers
                 var token = new RestRequest("https://localhost:5003/api/authenticate/token");
                 token.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = mail,
+                    Mail = mail,
                     Password = password
                 }));
                 var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -215,8 +220,9 @@ namespace BookCase.Web.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.StackTrace);
                 ModelState.AddModelError("APP_ERROR", "Author doesn't exists.");
                 return View();
             }

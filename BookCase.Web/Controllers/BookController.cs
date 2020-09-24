@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookCase.Domain.Author;
 using BookCase.Domain.Book;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,6 +12,7 @@ using RestSharp;
 
 namespace BookCase.Web.Controllers
 {
+    [Authorize]
     public class BookController : Controller
     {
         // GET: BookController
@@ -22,7 +25,7 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -43,12 +46,12 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
 
-            var requestBook = new RestRequest("https://localhost:5003/api/book" + id);
+            var requestBook = new RestRequest("https://localhost:5003/api/book/" + id);
             requestBook.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
 
             return View(client.Get<Book>(requestBook).Data);
@@ -74,10 +77,17 @@ namespace BookCase.Web.Controllers
                 var token = new RestRequest("https://localhost:5003/api/authenticate/token");
                 token.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = mail,
+                    Mail = mail,
                     Password = password
                 }));
                 var tokenResponse = client.Post<TokenResult>(token).Data;
+
+                var requestAuthor = new RestRequest("https://localhost:5003/api/author/getbyname/" + book.authorName.ToLower().Replace(" ", ""));
+                requestAuthor.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
+
+                var author = client.Get<Author>(requestAuthor).Data;
+
+                book.Author = author;
 
                 var requestBook = new RestRequest("https://localhost:5003/api/book");
                 requestBook.AddJsonBody(JsonConvert.SerializeObject(new
@@ -95,7 +105,7 @@ namespace BookCase.Web.Controllers
             }
             catch
             {
-                ModelState.AddModelError("APP_ERROR", "Book already exists.");
+                ModelState.AddModelError("APP_ERROR", "Book already exists or Author doesn't exists.");
                 return View();
             }
         }
@@ -110,7 +120,7 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -119,7 +129,7 @@ namespace BookCase.Web.Controllers
             requestBook.AddHeader("Authorization", "Bearer " + tokenResponse.Token);
 
             var book = (client.Get<Book>(requestBook).Data);
-            this.HttpContext.Session.SetString("BookId", client.Get<Book>(requestBook).Data.Id.ToString());
+            this.HttpContext.Session.SetString("BookId", JsonConvert.SerializeObject(client.Get<Book>(requestBook).Data.Id.ToString()));
             return View(book);
         }
 
@@ -137,7 +147,7 @@ namespace BookCase.Web.Controllers
                 var token = new RestRequest("https://localhost:5003/api/authenticate/token");
                 token.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = mail,
+                    Mail = mail,
                     Password = password
                 }));
                 var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -157,10 +167,11 @@ namespace BookCase.Web.Controllers
 
                 this.HttpContext.Session.Remove("BookId");
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.StackTrace);
                 ModelState.AddModelError("APP_ERROR", "Book doesn't exists.");
                 return View();
             }
@@ -176,7 +187,7 @@ namespace BookCase.Web.Controllers
             var token = new RestRequest("https://localhost:5003/api/authenticate/token");
             token.AddJsonBody(JsonConvert.SerializeObject(new
             {
-                Email = mail,
+                Mail = mail,
                 Password = password
             }));
             var tokenResponse = client.Post<TokenResult>(token).Data;
@@ -202,7 +213,7 @@ namespace BookCase.Web.Controllers
                 var token = new RestRequest("https://localhost:5003/api/authenticate/token");
                 token.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = mail,
+                    Mail = mail,
                     Password = password
                 }));
                 var tokenResponse = client.Post<TokenResult>(token).Data;

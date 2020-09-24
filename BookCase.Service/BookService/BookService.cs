@@ -1,4 +1,5 @@
-﻿using BookCase.Domain.Book.Repository;
+﻿using BookCase.Domain.Author.Repository;
+using BookCase.Domain.Book.Repository;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,18 +12,26 @@ namespace BookCase.Service.BookService
     public class BookService : IBookService
     {
         private IBookRepository BookRepository { get; set; }
+        private IAuthorRepository AuthorRepository { get; set; }
 
-        public BookService(IBookRepository bookRepository)
+        public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository)
         {
             this.BookRepository = bookRepository;
+            this.AuthorRepository = authorRepository;
         }
 
         public async Task<IdentityResult> SaveBook(Domain.Book.Book book)
         {
+            var author = AuthorRepository.GetAll().Where(x => (x.Name + x.Surname).ToLower().Replace(" ", "") == book.authorName.ToLower().Replace(" ", "")).FirstOrDefault();
             if (BookRepository.GetBookByISBN(book.ISBN) != null)
             {
                 throw new Exception("Já existe um livro com este ISBN");
             }
+            else if (author == null) 
+            {
+                throw new Exception("Não existe um autor com este nome.");
+            }
+            book.Author = author;
             return await BookRepository.CreateBookAsync(book);
         }
 

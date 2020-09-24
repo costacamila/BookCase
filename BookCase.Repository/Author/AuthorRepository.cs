@@ -13,7 +13,7 @@ namespace BookCase.Repository.Author
     public class AuthorRepository : IAuthorRepository
     {
         private BookCaseContext Context { get; set; }
-        public AuthorRepository (BookCaseContext bookCaseContext)
+        public AuthorRepository(BookCaseContext bookCaseContext)
         {
             this.Context = bookCaseContext;
         }
@@ -26,8 +26,26 @@ namespace BookCase.Repository.Author
 
         public async Task<IdentityResult> DeleteAuthorAsync(Guid id)
         {
-            this.Context.Authors.Remove(GetById(id));
-            await this.Context.SaveChangesAsync();
+            var author = Context.Authors.Include(x => x.Books).FirstOrDefault(x => x.Id == id);
+
+            using (var transaction = this.Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var item in author.Books)
+                    {
+                        this.Context.Books.Remove(item);
+                    }
+                    this.Context.Authors.Remove(author);
+                    await this.Context.SaveChangesAsync();
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.StackTrace);
+                    transaction.Rollback();
+                }
+            }
             return IdentityResult.Success;
         }
 
@@ -43,21 +61,48 @@ namespace BookCase.Repository.Author
 
         public Domain.Author.Author GetById(Guid authorId)
         {
-            return this.Context.Authors.FirstOrDefault(x => x.Id == authorId);
+            return this.Context.Authors.Include(x => x.Books).FirstOrDefault(x => x.Id == authorId);
         }
 
         public async Task<IdentityResult> UpdateAuthorAsync(Domain.Author.Author newAuthor)
         {
-            var authorOld = Context.Authors.FirstOrDefault(x => x.Id == newAuthor.Id);
+            try
+            {
+                var authorOld = Context.Authors.Include(x => x.Books).FirstOrDefault(x => x.Id == newAuthor.Id);
 
-            authorOld.Name = newAuthor.Name;
-            authorOld.Surname = newAuthor.Surname;
-            authorOld.Mail = newAuthor.Mail;
-            authorOld.Birthday = newAuthor.Birthday;
+                authorOld.Name = newAuthor.Name;
+                authorOld.Surname = newAuthor.Surname;
+                authorOld.Mail = newAuthor.Mail;
+                authorOld.Birthday = newAuthor.Birthday;
 
-            Context.Authors.Update(authorOld);
-            await this.Context.SaveChangesAsync();
-            return IdentityResult.Success;
+                using (var transaction = this.Context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        foreach (var item in authorOld.Books)
+                        {
+                            item.Author = authorOld;
+                            item.authorName = authorOld.Name + " " + authorOld.Surname;
+                            this.Context.Books.Update(item);
+                        }
+                        await this.Context.SaveChangesAsync();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.StackTrace);
+                        transaction.Rollback();
+                    }
+                }
+
+                Context.Authors.Update(authorOld);
+                await this.Context.SaveChangesAsync();
+                return IdentityResult.Success;
+            }
+            catch
+            {
+                return IdentityResult.Failed();
+            }
 
         }
     }

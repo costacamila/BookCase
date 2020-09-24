@@ -53,7 +53,7 @@ namespace BookCase.Web.Controllers
                 var requestUser = new RestRequest("https://localhost:5003/api/user");
                 requestUser.AddJsonBody(JsonConvert.SerializeObject(new
                 {
-                    Email = user.Mail,
+                    Mail = user.Mail,
                     Password = user.Password
                 }));
 
@@ -143,7 +143,7 @@ namespace BookCase.Web.Controllers
 
                 var user = client.Get<User>(requestUser).Data;
 
-                this.HttpContext.Session.SetString("UserEmail", user.Mail);
+                this.HttpContext.Session.SetString("UserMail", user.Mail);
                 this.HttpContext.Session.SetString("UserPassword", user.Password);
                 this.HttpContext.Session.SetString("UserId", user.Id.ToString());
 
